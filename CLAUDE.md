@@ -23,9 +23,9 @@ See `docs_for_ai/development-plan.md` for full details of each phase.
 | 3 | API Server | Complete |
 | 4 | AI Features | Complete |
 | 5 | CLI Tool | Complete |
-| 6 | Web Frontend | Not started |
+| 6 | Web Frontend | Complete |
 
-**Current phase:** 6 — Web Frontend
+**All phases complete.**
 
 > Update this table as each phase is completed.
 
