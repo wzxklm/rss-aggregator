@@ -18,14 +18,14 @@ See `docs_for_ai/development-plan.md` for full details of each phase.
 | Phase | Name | Status |
 |-------|------|--------|
 | 0 | Project Scaffolding | Complete |
-| 1 | Core — Database & Models | Not started |
+| 1 | Core — Database & Models | Complete |
 | 2 | Core — RSS Fetching | Not started |
 | 3 | API Server | Not started |
 | 4 | AI Features | Not started |
 | 5 | CLI Tool | Not started |
 | 6 | Web Frontend | Not started |
 
-**Current phase:** 1 — Core: Database & Models
+**Current phase:** 2 — Core: RSS Fetching
 
 > Update this table as each phase is completed.
 

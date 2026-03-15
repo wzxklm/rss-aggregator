@@ -11,5 +11,8 @@
   "devDependencies": {
     "turbo": "^2.x",
     "typescript": "^5.x"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["better-sqlite3", "esbuild"]
   }
 }
