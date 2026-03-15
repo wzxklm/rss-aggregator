@@ -2,5 +2,6 @@ node_modules
 dist
 .env
 *.db
+*.tsbuildinfo
 .turbo
 .pnpm-store
