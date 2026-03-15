@@ -27,6 +27,7 @@ cp .env.example .env
 | `APP_PORT` | Docker exposed port | No (defaults to 8765) |
 | `LOG_LEVEL` | Log level (debug/info/warn/error) | No (defaults to info) |
 | `CRON_INTERVAL` | RSS fetch cron expression | No (defaults to every 30 min) |
+| `GITHUB_ACCESS_TOKEN` | GitHub token for RSSHub GitHub routes (trending, etc.) | No |
 
 ## Install via GitHub Packages
 
