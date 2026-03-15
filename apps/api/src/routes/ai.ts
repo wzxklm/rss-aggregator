@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { aiService } from "@rss-agg/core";
+import { aiService } from "@wzxklm/rss-agg-core";
 
 export const aiRoutes = new Hono();
 

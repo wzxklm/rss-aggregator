@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { categoryService } from "@rss-agg/core";
+import { categoryService } from "@wzxklm/rss-agg-core";
 
 const categoryRoutes = new Hono();
 

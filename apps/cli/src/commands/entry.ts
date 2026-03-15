@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { entryService } from "@rss-agg/core";
+import { entryService } from "@wzxklm/rss-agg-core";
 import { initDb, success, fail } from "../output.js";
 
 export function registerEntryCommands(program: Command): void {

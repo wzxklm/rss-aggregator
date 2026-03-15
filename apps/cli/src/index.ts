@@ -1,7 +1,26 @@
 #!/usr/bin/env node
 
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
+import { homedir } from "node:os";
+
+// Load config from ~/.config/rss-agg/.env (only sets vars not already in env)
+const configPath = join(homedir(), ".config", "rss-agg", ".env");
+if (existsSync(configPath)) {
+  const lines = readFileSync(configPath, "utf-8").split("\n");
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eqIndex = trimmed.indexOf("=");
+    if (eqIndex === -1) continue;
+    const key = trimmed.slice(0, eqIndex).trim();
+    const value = trimmed.slice(eqIndex + 1).trim();
+    if (!process.env[key]) process.env[key] = value;
+  }
+}
+
 // Suppress pino logs to stdout — CLI output must be JSON only.
-// Must be set before any @rss-agg/core modules are imported (pino reads env at init).
+// Must be set before any @wzxklm/rss-agg-core modules are imported (pino reads env at init).
 process.env["LOG_LEVEL"] = "silent";
 
 async function main() {

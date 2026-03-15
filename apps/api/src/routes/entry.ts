@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { entryService, getDb, schema } from "@rss-agg/core";
+import { entryService, getDb, schema } from "@wzxklm/rss-agg-core";
 import { eq } from "drizzle-orm";
 
 const entryRoutes = new Hono();

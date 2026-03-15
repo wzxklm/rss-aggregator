@@ -1,7 +1,16 @@
 {
-  "name": "@rss-agg/core",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@wzxklm/rss-agg-core",
+  "version": "1.0.0",
+  "private": false,
+  "license": "MIT",
+  "files": ["dist"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wzxklm/rss-aggregator"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -20,7 +20,7 @@ importers:
       '@hono/node-server':
         specifier: ^1.19.11
         version: 1.19.11(hono@4.12.8)
-      '@rss-agg/core':
+      '@wzxklm/rss-agg-core':
         specifier: workspace:*
         version: link:../../packages/core
       drizzle-orm:
@@ -35,7 +35,7 @@ importers:
 
   apps/cli:
     dependencies:
-      '@rss-agg/core':
+      '@wzxklm/rss-agg-core':
         specifier: workspace:*
         version: link:../../packages/core
       commander:

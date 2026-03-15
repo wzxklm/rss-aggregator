@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import * as jose from "jose";
-import { logger } from "@rss-agg/core";
+import { logger } from "@wzxklm/rss-agg-core";
 
 const auth = new Hono();
 

@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { aiService } from "@rss-agg/core";
+import { aiService } from "@wzxklm/rss-agg-core";
 import { initDb, success, fail } from "../output.js";
 
 export function registerAiCommands(program: Command): void {

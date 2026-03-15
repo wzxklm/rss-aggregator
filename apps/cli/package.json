@@ -1,7 +1,17 @@
 {
-  "name": "@rss-agg/cli",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@wzxklm/rss-agg",
+  "version": "1.0.1",
+  "private": false,
+  "license": "MIT",
+  "description": "RSS aggregator CLI with AI-powered summarization and translation",
+  "files": ["dist"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wzxklm/rss-aggregator"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "type": "module",
   "bin": {
     "rss-agg": "dist/index.js"
@@ -12,7 +22,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@rss-agg/core": "workspace:*",
+    "@wzxklm/rss-agg-core": "workspace:*",
     "commander": "^14.0.3"
   }
 }

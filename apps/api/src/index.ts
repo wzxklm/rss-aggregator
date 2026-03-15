@@ -5,7 +5,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
-import { runMigrations, logger, schedulerService } from "@rss-agg/core";
+import { runMigrations, logger, schedulerService } from "@wzxklm/rss-agg-core";
 import { auth, requireAuth } from "./middleware/auth.js";
 import { feedRoutes } from "./routes/feed.js";
 import { entryRoutes } from "./routes/entry.js";

@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { eq } from "drizzle-orm";
-import { feedService, getDb, schema } from "@rss-agg/core";
+import { feedService, getDb, schema } from "@wzxklm/rss-agg-core";
 
 const feedRoutes = new Hono();
 

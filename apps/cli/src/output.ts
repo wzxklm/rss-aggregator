@@ -1,4 +1,4 @@
-import { runMigrations } from "@rss-agg/core";
+import { runMigrations } from "@wzxklm/rss-agg-core";
 
 let dbReady = false;
 

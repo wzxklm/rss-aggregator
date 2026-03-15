@@ -28,6 +28,52 @@ cp .env.example .env
 | `LOG_LEVEL` | Log level (debug/info/warn/error) | No (defaults to info) |
 | `CRON_INTERVAL` | RSS fetch cron expression | No (defaults to every 30 min) |
 
+## Install via GitHub Packages
+
+The CLI tool is published to GitHub Packages as `@wzxklm/rss-agg`.
+
+```bash
+# 1. Configure npm registry (one-time)
+echo "@wzxklm:registry=https://npm.pkg.github.com" >> ~/.npmrc
+
+# 2. Install globally
+npm install -g @wzxklm/rss-agg
+
+# 3. Create config file
+mkdir -p ~/.config/rss-agg
+cat > ~/.config/rss-agg/.env << 'EOF'
+DATABASE_PATH=~/.config/rss-agg/data.db
+AI_BASE_URL=https://api.openai.com/v1
+AI_API_KEY=sk-your-api-key
+AI_MODEL=gpt-4o-mini
+EOF
+
+# 4. Use the CLI
+rss-agg feed list
+rss-agg feed add https://example.com/rss.xml
+rss-agg entry list --limit 10
+rss-agg ai summarize <entryId>
+```
+
+Or run directly with npx (config file still applies):
+
+```bash
+npx @wzxklm/rss-agg feed list
+```
+
+### CLI Configuration
+
+The CLI reads `~/.config/rss-agg/.env` on startup. Environment variables set in your shell take precedence over the config file.
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_PATH` | SQLite database file path | Yes |
+| `AI_BASE_URL` | OpenAI-compatible API base URL | No (defaults to OpenAI) |
+| `AI_API_KEY` | AI provider API key | Required for AI features |
+| `AI_MODEL` | AI model name | No (defaults to gpt-4o-mini) |
+
+> The CLI operates directly on a local SQLite database and outputs JSON, designed for AI agents.
+
 ## Deployment
 
 ### Option 1: Docker (Recommended)

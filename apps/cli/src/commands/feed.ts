@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { feedService, categoryService } from "@rss-agg/core";
+import { feedService, categoryService } from "@wzxklm/rss-agg-core";
 import { initDb, success, fail } from "../output.js";
 
 function resolveCategoryId(name: string): string | undefined {
