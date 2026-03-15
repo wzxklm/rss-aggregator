@@ -12,6 +12,7 @@ export { logger } from "./logger.js";
 export * as feedService from "./services/feed.js";
 export * as entryService from "./services/entry.js";
 export * as categoryService from "./services/category.js";
+export * as schedulerService from "./services/scheduler.js";
 
 // Types
 export type {

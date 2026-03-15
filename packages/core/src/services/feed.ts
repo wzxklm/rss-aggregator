@@ -1,9 +1,12 @@
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import RssParser from "rss-parser";
 import { getDb } from "../db/client.js";
-import { feeds, feedCategories } from "../db/schema.js";
+import { feeds, feedCategories, entries } from "../db/schema.js";
 import { logger } from "../logger.js";
 import type { Feed, Result } from "../types/index.js";
+
+const rssParser = new RssParser();
 
 export function createFeed(input: {
   url: string;
@@ -108,4 +111,194 @@ export function deleteFeed(id: string): Result<{ success: true }> {
     const msg = err instanceof Error ? err.message : String(err);
     return { error: msg };
   }
+}
+
+// ── RSS Fetching ──────────────────────────────────────────────────────────
+
+export interface ParsedFeedItem {
+  guid: string;
+  title: string | null;
+  url: string | null;
+  author: string | null;
+  content: string | null;
+  description: string | null;
+  publishedAt: number;
+}
+
+export interface ParsedFeed {
+  title: string | null;
+  siteUrl: string | null;
+  description: string | null;
+  imageUrl: string | null;
+  items: ParsedFeedItem[];
+}
+
+export async function fetchAndParseFeed(url: string): Promise<Result<ParsedFeed>> {
+  try {
+    const feed = await rssParser.parseURL(url);
+
+    const items: ParsedFeedItem[] = (feed.items ?? []).map((item) => ({
+      guid: item.guid ?? item.link ?? item.title ?? nanoid(),
+      title: item.title ?? null,
+      url: item.link ?? null,
+      author: item.creator ?? item.author ?? null,
+      content: item["content:encoded"] ?? item.content ?? null,
+      description: item.contentSnippet ?? item.summary ?? null,
+      publishedAt: item.pubDate ? new Date(item.pubDate).getTime() : Date.now(),
+    }));
+
+    return {
+      data: {
+        title: feed.title ?? null,
+        siteUrl: feed.link ?? null,
+        description: feed.description ?? null,
+        imageUrl: feed.image?.url ?? null,
+        items,
+      },
+    };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.warn({ err, url }, `Feed fetch failed: "${url}" - ${msg}`);
+    return { error: msg };
+  }
+}
+
+export async function refreshFeed(feedId: string): Promise<Result<{ entriesAdded: number }>> {
+  const feedResult = getFeedById(feedId);
+  if (feedResult.error) return { error: feedResult.error };
+  const feed = feedResult.data!;
+
+  const parseResult = await fetchAndParseFeed(feed.url);
+  if (parseResult.error) {
+    updateFeed(feedId, { errorMessage: parseResult.error });
+    return { error: parseResult.error };
+  }
+
+  const parsed = parseResult.data!;
+  const db = getDb();
+  let entriesAdded = 0;
+
+  for (const item of parsed.items) {
+    try {
+      db.insert(entries)
+        .values({
+          id: nanoid(),
+          feedId,
+          guid: item.guid,
+          title: item.title,
+          url: item.url,
+          author: item.author,
+          content: item.content,
+          description: item.description,
+          publishedAt: item.publishedAt,
+        })
+        .run();
+      entriesAdded++;
+    } catch (err) {
+      // UNIQUE constraint violation means duplicate — skip silently
+      if (err instanceof Error && err.message.includes("UNIQUE constraint")) {
+        continue;
+      }
+      logger.error({ err, feedId, guid: item.guid }, "Failed to insert entry");
+    }
+  }
+
+  // Update feed metadata if this is the first successful fetch (no title yet)
+  if (!feed.title && parsed.title) {
+    updateFeed(feedId, {
+      title: parsed.title,
+      siteUrl: parsed.siteUrl ?? undefined,
+      description: parsed.description ?? undefined,
+      imageUrl: parsed.imageUrl ?? undefined,
+    });
+  }
+
+  updateFeed(feedId, { lastFetchedAt: Date.now(), errorMessage: null });
+  const displayTitle = feed.title ?? parsed.title;
+  logger.info({ feedId, title: displayTitle, entriesAdded }, `Feed refreshed: "${displayTitle}" (+${entriesAdded} entries)`);
+
+  return { data: { entriesAdded } };
+}
+
+export async function refreshAllFeeds(): Promise<Result<{ totalAdded: number; results: { feedId: string; entriesAdded?: number; error?: string }[] }>> {
+  const allFeedsResult = getAllFeeds();
+  if (allFeedsResult.error) return { error: allFeedsResult.error };
+  const allFeeds = allFeedsResult.data!;
+
+  const results: { feedId: string; entriesAdded?: number; error?: string }[] = [];
+  let totalAdded = 0;
+
+  for (const feed of allFeeds) {
+    const result = await refreshFeed(feed.id);
+    if (result.error) {
+      results.push({ feedId: feed.id, error: result.error });
+    } else {
+      totalAdded += result.data!.entriesAdded;
+      results.push({ feedId: feed.id, entriesAdded: result.data!.entriesAdded });
+    }
+  }
+
+  logger.info({ totalAdded, feedCount: allFeeds.length }, `All feeds refreshed: ${totalAdded} new entries from ${allFeeds.length} feeds`);
+  return { data: { totalAdded, results } };
+}
+
+export async function addFeed(input: {
+  url: string;
+  categoryId?: string;
+}): Promise<Result<Feed>> {
+  // Fetch and parse the feed first to extract metadata
+  const parseResult = await fetchAndParseFeed(input.url);
+  const metadata = parseResult.data;
+
+  // Create the feed record with auto-extracted metadata
+  const createResult = createFeed({
+    url: input.url,
+    title: metadata?.title ?? undefined,
+    siteUrl: metadata?.siteUrl ?? undefined,
+    description: metadata?.description ?? undefined,
+    imageUrl: metadata?.imageUrl ?? undefined,
+    categoryId: input.categoryId,
+  });
+
+  if (createResult.error) return createResult;
+  const createdFeed = createResult.data!;
+
+  // If parsing succeeded, insert initial entries
+  if (metadata) {
+    const db = getDb();
+    let entriesAdded = 0;
+    for (const item of metadata.items) {
+      try {
+        db.insert(entries)
+          .values({
+            id: nanoid(),
+            feedId: createdFeed.id,
+            guid: item.guid,
+            title: item.title,
+            url: item.url,
+            author: item.author,
+            content: item.content,
+            description: item.description,
+            publishedAt: item.publishedAt,
+          })
+          .run();
+        entriesAdded++;
+      } catch (err) {
+        if (err instanceof Error && err.message.includes("UNIQUE constraint")) {
+          continue;
+        }
+        logger.error({ err, feedId: createdFeed.id, guid: item.guid }, "Failed to insert entry");
+      }
+    }
+
+    updateFeed(createdFeed.id, { lastFetchedAt: Date.now(), errorMessage: null });
+    logger.info({ feedId: createdFeed.id, entriesAdded }, `Feed added with ${entriesAdded} initial entries`);
+  } else {
+    // Parsing failed but feed was still created — store the error
+    updateFeed(createdFeed.id, { errorMessage: parseResult.error });
+    logger.warn({ feedId: createdFeed.id, error: parseResult.error }, "Feed added but initial fetch failed");
+  }
+
+  // Return the updated feed (with metadata populated)
+  return getFeedById(createdFeed.id);
 }
