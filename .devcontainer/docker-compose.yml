@@ -1,0 +1,29 @@
+services:
+  test01:
+    image: test01:latest
+    container_name: test01_container
+    init: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TZ: ${TZ:-America/Los_Angeles}
+        GIT_DELTA_VERSION: 0.18.2
+    volumes:
+      - ..:/workspace
+      - /data/wzx/docker_volumes/command_history:/commandhistory
+      - /data/wzx/docker_volumes/claude_config:/home/sandboxuser/.claude
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=4096
+      - CLAUDE_CONFIG_DIR=/home/sandboxuser/.claude
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: sleep infinity
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
