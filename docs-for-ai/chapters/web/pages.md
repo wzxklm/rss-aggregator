@@ -35,9 +35,12 @@ Main reading interface. Dual-pane layout: entry list (left, 360px) + reader pane
 - **External link**: Opens original URL in new tab with `rel="noopener noreferrer"`
 
 ### AIPanel Sub-component
-- **Summarize**: Calls `useSummarize({ entryId })`, default language `"en"`
-- **Translate**: Language selector (zh, es, fr, de, ja, ko) + `useTranslate({ entryId, language })`
-- **Result display**: Shows existing summaries/translations from entry detail, or fresh mutation result
+- **Position**: Rendered at top of reader panel (after title/metadata/actions, before content separator)
+- **Layout**: Action buttons (Summarize, Translate) on the left, shared language selector on the right — one dropdown controls target language for both operations
+- **Summarize**: Calls `useSummarize({ entryId, language: targetLang })` with selected language (default `"zh"`)
+- **Translate**: Calls `useTranslate({ entryId, language: targetLang })` with same selected language
+- **Language options**: zh, es, fr, de, ja, ko
+- **Result display**: Shows existing summaries/translations matching selected language from entry detail, or fresh mutation result
 - **Error toasts**: Mutation errors shown via `toast.error()`
 
 ### EntryListToolbar Sub-component

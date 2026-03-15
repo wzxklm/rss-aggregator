@@ -125,7 +125,8 @@ User selects entry:
 
 ```
 User requests summary (Web AI Panel or CLI)
-├── Web: click Summarize → POST /api/ai/summarize/:entryId { language? }
+├── Web: click Summarize → POST /api/ai/summarize/:entryId { language }
+│   └── language comes from shared language selector (default "zh")
 └── CLI: ai summarize <entryId> [--lang <code>]
 
 aiService.summarizeEntry(entryId, language = "en"):
@@ -154,7 +155,8 @@ Web post-mutation:
 
 ```
 User requests translation (Web AI Panel or CLI)
-├── Web: select language → click Translate → POST /api/ai/translate/:entryId { language }
+├── Web: click Translate → POST /api/ai/translate/:entryId { language }
+│   └── language from same shared selector as Summarize (default "zh")
 └── CLI: ai translate <entryId> [--lang <code>]
 
 aiService.translateEntry(entryId, targetLanguage):

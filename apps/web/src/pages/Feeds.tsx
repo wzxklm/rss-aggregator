@@ -269,6 +269,9 @@ function ReaderPanel({ entryId, onBack }: { entryId: string; onBack: () => void 
           )}
         </div>
 
+        {/* AI Panel */}
+        <AIPanel entryId={entry.id} summaries={entry.summaries} translations={entry.translations} />
+
         <Separator />
 
         {/* Content */}
@@ -280,11 +283,6 @@ function ReaderPanel({ entryId, onBack }: { entryId: string; onBack: () => void 
         ) : (
           <p className="text-muted-foreground text-sm">No content available</p>
         )}
-
-        <Separator />
-
-        {/* AI Panel */}
-        <AIPanel entryId={entry.id} summaries={entry.summaries} translations={entry.translations} />
       </div>
     </ScrollArea>
   );
@@ -305,12 +303,12 @@ function AIPanel({
   const translate = useTranslate();
   const [targetLang, setTargetLang] = useState("zh");
 
-  const existingSummary = summaries.find((s) => s.language === "en");
+  const existingSummary = summaries.find((s) => s.language === targetLang);
   const existingTranslation = translations.find((t) => t.language === targetLang);
 
   function handleSummarize() {
     summarize.mutate(
-      { entryId },
+      { entryId, language: targetLang },
       {
         onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to summarize"),
       },
@@ -327,30 +325,17 @@ function AIPanel({
   }
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-medium">AI Actions</h3>
-      <div className="flex flex-wrap items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleSummarize}
-          disabled={summarize.isPending}
-        >
-          {summarize.isPending ? "Summarizing..." : "Summarize"}
-        </Button>
-        <div className="flex items-center gap-1">
-          <select
-            className="h-8 rounded-md border border-input bg-transparent px-2 text-sm"
-            value={targetLang}
-            onChange={(e) => setTargetLang(e.target.value)}
+    <div className="space-y-3">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSummarize}
+            disabled={summarize.isPending}
           >
-            <option value="zh">Chinese</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-            <option value="ja">Japanese</option>
-            <option value="ko">Korean</option>
-          </select>
+            {summarize.isPending ? "Summarizing..." : "Summarize"}
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -360,6 +345,18 @@ function AIPanel({
             {translate.isPending ? "Translating..." : "Translate"}
           </Button>
         </div>
+        <select
+          className="h-8 rounded-md border border-input bg-transparent px-2 text-sm"
+          value={targetLang}
+          onChange={(e) => setTargetLang(e.target.value)}
+        >
+          <option value="zh">Chinese</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+        </select>
       </div>
 
       {/* Summary result */}
