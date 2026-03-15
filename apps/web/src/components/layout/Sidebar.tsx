@@ -115,13 +115,13 @@ export function Sidebar({ className }: SidebarProps) {
             ))}
           </div>
 
-          {/* Feeds */}
-          {feeds.length > 0 && (
+          {/* Uncategorized Feeds */}
+          {feeds.filter((f) => !f.categoryId).length > 0 && (
             <div className="pt-2">
               <div className="px-3 pb-1">
                 <span className="text-xs font-medium text-muted-foreground uppercase">Feeds</span>
               </div>
-              {feeds.map((feed) => (
+              {feeds.filter((f) => !f.categoryId).map((feed) => (
                 <FeedItem key={feed.id} feed={feed} navigate={navigate} isActive={isActive(`/feed/${feed.id}`)} />
               ))}
             </div>
@@ -187,7 +187,8 @@ function CategoryGroup({
   navigate: (path: string) => void;
   isActive: (path: string) => boolean;
 }) {
-  const [open, setOpen] = useState(true);
+  const categoryFeeds = feeds.filter((f) => f.categoryId === category.id);
+  const [open, setOpen] = useState(categoryFeeds.length > 0);
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
@@ -203,8 +204,10 @@ function CategoryGroup({
         )}
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className="ml-4">
-          {/* Feeds in this category would be shown here once we have feed-category data */}
+        <div className="ml-4 space-y-0.5 pt-0.5">
+          {categoryFeeds.map((feed) => (
+            <FeedItem key={feed.id} feed={feed} navigate={navigate} isActive={isActive(`/feed/${feed.id}`)} />
+          ))}
         </div>
       </CollapsibleContent>
     </Collapsible>

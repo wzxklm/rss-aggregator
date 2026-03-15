@@ -43,6 +43,7 @@ export interface Feed {
   imageUrl: string | null;
   lastFetchedAt: number | null;
   errorMessage: string | null;
+  categoryId: string | null;
   createdAt: number;
 }
 

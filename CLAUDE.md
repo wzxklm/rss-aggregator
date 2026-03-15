@@ -32,26 +32,25 @@ See `docs_for_ai/development-plan.md` for full details of each phase.
 
 ## 3. Project Documentation
 
-Documentation directory: `docs_for_ai/`
+Documentation directory: `docs-for-ai/`
 
-- `project-architecture.md` — overview, tech stack, directory structure, coding conventions, logging, environment variables
-- `data-and-api-design.md` — database schema, API endpoints, API help endpoint, AI integration design
-- `cli-design.md` — CLI commands, JSON output convention, CLI help command
-- `web-ui-design.md` — pages, routes, component tree, state management, responsive layout, error handling
-- `development-plan.md` — phased implementation plan (Phase 0–6) with tasks and verification criteria
+- `index.md` — project index: metadata, directory tree, architecture diagram, dependency map, chapter listing
+- `pitfalls.md` — pitfalls & conventions grouped by domain, must-read before coding
+- `chapters/core/` — core library: database, services (feed, entry, category, AI, scheduler), infrastructure
+- `chapters/api/` — API server: app init, auth, route modules (feed, entry, category, AI, help)
+- `chapters/cli/` — CLI tool: entry point, command groups (feed, entry, AI, server), output handler
+- `chapters/web/` — web frontend: routing/state, pages, layout, UI components
+- `chapters/workflows.md` — end-to-end workflows with pseudocode flowcharts
 
 ## 4. AI Workflow Rules
 
-- Before starting any task, read `docs_for_ai/development-plan.md` to understand current phase and task context
-- Then read the relevant document(s) as needed:
-  - Project structure / conventions / env vars → `project-architecture.md`
-  - Database / API / AI work → `data-and-api-design.md`
-  - CLI work → `cli-design.md`
-  - Frontend work → `web-ui-design.md`
-- Follow the phase order in `development-plan.md` — each phase depends on the previous one
-- All CLI output must be JSON (CLI is for AI agents, not humans)
-- All API content fields return raw HTML (frontend handles rendering and sanitization)
-- Use OpenAI-compatible format (`openai` npm package) for AI calls — not Anthropic SDK
+- Before starting any task, read `docs-for-ai/index.md` for project overview and `docs-for-ai/pitfalls.md` for conventions
+- Then read the relevant chapter(s) as needed:
+  - Database / services / types → `chapters/core/`
+  - API routes / auth / middleware → `chapters/api/`
+  - CLI commands / output → `chapters/cli/`
+  - Frontend pages / components / hooks → `chapters/web/`
+  - Cross-component tasks → `chapters/workflows.md`
 
 ## 5. Publishing to GitHub Packages
 

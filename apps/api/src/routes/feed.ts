@@ -9,7 +9,20 @@ feedRoutes.get("/", (c) => {
   const categoryId = c.req.query("categoryId");
   const result = feedService.getAllFeeds(categoryId);
   if (result.error) return c.json({ error: result.error }, 500);
-  return c.json(result.data);
+
+  // Enrich feeds with their categoryId from the join table
+  const db = getDb();
+  const mappings = db
+    .select({ feedId: schema.feedCategories.feedId, categoryId: schema.feedCategories.categoryId })
+    .from(schema.feedCategories)
+    .all();
+  const feedCategoryMap = new Map(mappings.map((m) => [m.feedId, m.categoryId]));
+
+  const enriched = result.data!.map((feed) => ({
+    ...feed,
+    categoryId: feedCategoryMap.get(feed.id) ?? null,
+  }));
+  return c.json(enriched);
 });
 
 // GET /api/feeds/:id

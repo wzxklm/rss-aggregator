@@ -50,9 +50,10 @@ const endpoints = [
   {
     method: "GET",
     path: "/api/feeds",
-    description: "List all feeds",
+    description: "List all feeds, each enriched with categoryId from feed_categories join table",
     auth: true,
-    query: { categoryId: "string?" },
+    query: { categoryId: "string? (filter by category)" },
+    response: { categoryId: "string | null (associated category, added to each Feed object)" },
   },
   {
     method: "GET",
