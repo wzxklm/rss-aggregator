@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+dist
+**/dist
+data
+.git
+.env
+.devcontainer
+.vscode
+docs_for_ai
+apps/cli
+*.md

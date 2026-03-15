@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT}:3000"
+    volumes:
+      - rss-data:/app/data
+    env_file:
+      - .env
+
+volumes:
+  rss-data:

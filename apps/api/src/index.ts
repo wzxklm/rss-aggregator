@@ -1,6 +1,10 @@
+import path from "node:path";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { runMigrations, logger, schedulerService } from "@rss-agg/core";
 import { auth, requireAuth } from "./middleware/auth.js";
 import { feedRoutes } from "./routes/feed.js";
@@ -46,6 +50,19 @@ app.route("/api/feeds", feedRoutes);
 app.route("/api/entries", entryRoutes);
 app.route("/api/categories", categoryRoutes);
 app.route("/api/ai", aiRoutes);
+
+// ── Static frontend (production) ─────────────────────────────────────────
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const staticDir = process.env["STATIC_DIR"] ?? path.resolve(__dirname, "../../web/dist");
+
+if (fs.existsSync(staticDir)) {
+  logger.info({ staticDir }, "Serving static frontend");
+  app.use("/*", serveStatic({ root: staticDir, rewriteRequestPath: (p) => p }));
+  app.get("*", async (c) => {
+    const html = fs.readFileSync(path.join(staticDir, "index.html"), "utf-8");
+    return c.html(html);
+  });
+}
 
 // ── Start server ──────────────────────────────────────────────────────────
 const port = Number(process.env["API_PORT"] ?? 3000);
