@@ -6,6 +6,7 @@ Manages the full feed lifecycle: CRUD operations on feed records, fetching and p
 
 ## Key Behaviors
 
+- **RSSHub URL Resolution**: URLs starting with `rsshub://` are resolved to the self-hosted RSSHub instance via `resolveRssHubUrl()`. The `rsshub://` prefix is replaced with the `RSSHUB_URL` env var value (e.g. `rsshub://github/trending/weekly/any` → `http://rsshub:1200/github/trending/weekly/any`). The original `rsshub://` URL is stored in the database, keeping it portable.
 - **RSS Parsing**: Uses `rss-parser` library. Extracts `content:encoded` (preferring it over `content`), falls back through `guid -> link -> title -> nanoid()` for entry GUIDs.
 - **Duplicate Suppression**: Inserts entries one-by-one; catches `UNIQUE constraint` errors on the `(feedId, guid)` index and silently skips duplicates. No pre-check query needed.
 - **Feed Metadata Auto-Population**: On first successful fetch (when `feed.title` is null), populates `title`, `siteUrl`, `description`, `imageUrl` from parsed feed data.
@@ -23,7 +24,8 @@ Manages the full feed lifecycle: CRUD operations on feed records, fetching and p
 | `getFeedById` | `(id) -> Result<Feed>` | Single feed lookup |
 | `updateFeed` | `(id, input) -> Result<Feed>` | Partial update of metadata/status fields |
 | `deleteFeed` | `(id) -> Result<{success}>` | Delete by ID; cascade deletes entries |
-| `fetchAndParseFeed` | `(url) -> Promise<Result<ParsedFeed>>` | Fetch URL, parse RSS/Atom, return structured data |
+| `resolveRssHubUrl` | `(url) -> string` | Resolve `rsshub://` URLs to self-hosted instance; pass-through for other URLs |
+| `fetchAndParseFeed` | `(url) -> Promise<Result<ParsedFeed>>` | Resolve URL (rsshub:// if needed), fetch, parse RSS/Atom |
 | `refreshFeed` | `(feedId) -> Promise<Result<{entriesAdded}>>` | Fetch + ingest new entries for one feed |
 | `refreshAllFeeds` | `() -> Promise<Result<{totalAdded, results}>>` | Refresh all feeds sequentially |
 | `addFeed` | `(input) -> Promise<Result<Feed>>` | Create feed with auto-fetched metadata + initial entries |
@@ -35,6 +37,7 @@ Manages the full feed lifecycle: CRUD operations on feed records, fetching and p
 
 ## Internal Details
 
+- **RSSHUB_PREFIX constant**: Module-level `"rsshub://"` prefix used by `resolveRssHubUrl()`. Throws if `RSSHUB_URL` env var is not set when a `rsshub://` URL is encountered.
 - **rssParser singleton**: Module-level `new RssParser()`, reused across all calls.
 - **GUID fallback chain**: `item.guid ?? item.link ?? item.title ?? nanoid()` — ensures every entry gets a GUID even if the feed omits it.
 - **Content extraction priority**: `item["content:encoded"] ?? item.content` for full content; `item.contentSnippet ?? item.summary` for description.
@@ -43,7 +46,7 @@ Manages the full feed lifecycle: CRUD operations on feed records, fetching and p
 
 ## Dependencies
 
-- Uses: DB Client (`getDb`), Schema (`feeds`, `feedCategories`, `entries`), Logger, `nanoid`, `rss-parser`
+- Uses: DB Client (`getDb`), Schema (`feeds`, `feedCategories`, `entries`), Logger, `nanoid`, `rss-parser`, `RSSHUB_URL` env var
 - Used by: API Feed Routes, CLI Feed Commands, Scheduler Service (`refreshAllFeeds`)
 
 ## Threading / Concurrency

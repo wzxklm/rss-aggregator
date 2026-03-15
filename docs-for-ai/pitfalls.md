@@ -16,6 +16,7 @@
 - **Silent duplicate skipping**: UNIQUE(feedId, guid) violations are caught and silently ignored during refresh — no logging, masks potential guid generation issues
 - **Serial refresh**: `refreshAllFeeds()` iterates feeds sequentially; slow with many feeds, no parallelism
 - **Error tracking**: Feed errors stored in `feed.errorMessage` field; cleared on next successful refresh; no historical error log
+- **rsshub:// requires RSSHUB_URL**: `resolveRssHubUrl()` throws if `RSSHUB_URL` env var is not set when processing `rsshub://` URLs; database stores the original `rsshub://` URL, resolution happens at fetch time
 
 ## Entry Service
 

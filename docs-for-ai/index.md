@@ -67,7 +67,7 @@ Monorepo RSS feed aggregator with core library, REST API, CLI tool, and React SP
 │       │   └── ui/                  # 12 Base UI primitives (button, dialog, etc.)
 │       └── lib/utils.ts             # cn() class merge utility
 ├── Dockerfile                       # Multi-stage: build → prod (API + static web)
-└── docker-compose.yml               # App service + rss-data volume
+└── docker-compose.yml               # App + RSSHub + Redis services
 ```
 
 ## Architecture

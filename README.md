@@ -46,6 +46,7 @@ DATABASE_PATH=~/.config/rss-agg/data.db
 AI_BASE_URL=https://api.openai.com/v1
 AI_API_KEY=sk-your-api-key
 AI_MODEL=gpt-4o-mini
+RSSHUB_URL=http://localhost:1200
 EOF
 
 # 4. Use the CLI
@@ -71,6 +72,7 @@ The CLI reads `~/.config/rss-agg/.env` on startup. Environment variables set in 
 | `AI_BASE_URL` | OpenAI-compatible API base URL | No (defaults to OpenAI) |
 | `AI_API_KEY` | AI provider API key | Required for AI features |
 | `AI_MODEL` | AI model name | No (defaults to gpt-4o-mini) |
+| `RSSHUB_URL` | Self-hosted RSSHub instance URL | No (for rsshub:// URLs) |
 
 > The CLI operates directly on a local SQLite database and outputs JSON, designed for AI agents.
 
@@ -98,13 +100,6 @@ docker compose down
 Visit `http://<server-ip>:<APP_PORT>` to access the Web UI.
 
 Data is persisted in the `rss-data` Docker volume.
-
-**Using CLI inside the container:**
-
-```bash
-docker compose exec app node apps/cli/dist/index.js help --json
-docker compose exec app node apps/cli/dist/index.js feed list
-```
 
 ### Option 2: Manual Deployment
 
@@ -139,6 +134,8 @@ systemctl enable --now rss-agg
 ### CLI Usage
 
 The CLI operates directly on the database — it does not depend on the API server. All output is JSON, designed for AI agents.
+
+The CLI reads `~/.config/rss-agg/.env` on startup (see [CLI Configuration](#cli-configuration) above for setup).
 
 ```bash
 # Help

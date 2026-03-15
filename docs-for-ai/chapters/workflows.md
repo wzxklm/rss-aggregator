@@ -39,7 +39,8 @@ User provides feed URL (Settings page, Sidebar dialog, or CLI)
 
 feedService.addFeed(input):
 ├── fetchAndParseFeed(url)
-│   ├── rss-parser.parseURL(url) → extract title, siteUrl, description, imageUrl, items
+│   ├── resolveRssHubUrl(url) → if rsshub:// prefix, replace with RSSHUB_URL base
+│   ├── rss-parser.parseURL(resolvedUrl) → extract title, siteUrl, description, imageUrl, items
 │   ├── Success → return ParsedFeed
 │   └── Failure → return { error } (stored in feed.errorMessage)
 ├── createFeed → INSERT into feeds table
@@ -71,7 +72,7 @@ On cron fire:
 │   ├── getAllFeeds() → fetch all feed records
 │   └── For each feed:
 │       ├── refreshFeed(feedId)
-│       │   ├── fetchAndParseFeed(feed.url)
+│       │   ├── fetchAndParseFeed(feed.url) → resolves rsshub:// if needed
 │       │   │   ├── Success → parse items
 │       │   │   └── Failure → set feed.errorMessage, continue
 │       │   ├── For each new item:
