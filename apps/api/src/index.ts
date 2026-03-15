@@ -7,6 +7,7 @@ import { feedRoutes } from "./routes/feed.js";
 import { entryRoutes } from "./routes/entry.js";
 import { categoryRoutes } from "./routes/category.js";
 import { helpRoute } from "./routes/help.js";
+import { aiRoutes } from "./routes/ai.js";
 
 const app = new Hono();
 
@@ -39,10 +40,12 @@ app.route("/api/help", helpRoute);
 app.use("/api/feeds/*", requireAuth);
 app.use("/api/entries/*", requireAuth);
 app.use("/api/categories/*", requireAuth);
+app.use("/api/ai/*", requireAuth);
 
 app.route("/api/feeds", feedRoutes);
 app.route("/api/entries", entryRoutes);
 app.route("/api/categories", categoryRoutes);
+app.route("/api/ai", aiRoutes);
 
 // ── Start server ──────────────────────────────────────────────────────────
 const port = Number(process.env["API_PORT"] ?? 3000);
