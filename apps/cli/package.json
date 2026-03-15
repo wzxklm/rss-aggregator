@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@rss-agg/core": "workspace:*"
+    "@rss-agg/core": "workspace:*",
+    "commander": "^14.0.3"
   }
 }

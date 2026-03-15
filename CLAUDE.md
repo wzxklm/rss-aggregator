@@ -22,10 +22,10 @@ See `docs_for_ai/development-plan.md` for full details of each phase.
 | 2 | Core — RSS Fetching | Complete |
 | 3 | API Server | Complete |
 | 4 | AI Features | Complete |
-| 5 | CLI Tool | Not started |
+| 5 | CLI Tool | Complete |
 | 6 | Web Frontend | Not started |
 
-**Current phase:** 5 — CLI Tool
+**Current phase:** 6 — Web Frontend
 
 > Update this table as each phase is completed.
 
