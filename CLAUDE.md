@@ -5,6 +5,7 @@
 DevContainer (Ubuntu 22.04 + CUDA 12.4), Node.js 22.x, gh CLI pre-installed.
 
 **Installed:**
+
 - pnpm 10.32.1
 - Turborepo 2.8.17
 - TypeScript 5.9.3
@@ -15,15 +16,15 @@ DevContainer (Ubuntu 22.04 + CUDA 12.4), Node.js 22.x, gh CLI pre-installed.
 
 See `docs_for_ai/development-plan.md` for full details of each phase.
 
-| Phase | Name | Status |
-|-------|------|--------|
-| 0 | Project Scaffolding | Complete |
-| 1 | Core — Database & Models | Complete |
-| 2 | Core — RSS Fetching | Complete |
-| 3 | API Server | Complete |
-| 4 | AI Features | Complete |
-| 5 | CLI Tool | Complete |
-| 6 | Web Frontend | Complete |
+| Phase | Name                     | Status   |
+| ----- | ------------------------ | -------- |
+| 0     | Project Scaffolding      | Complete |
+| 1     | Core — Database & Models | Complete |
+| 2     | Core — RSS Fetching      | Complete |
+| 3     | API Server               | Complete |
+| 4     | AI Features              | Complete |
+| 5     | CLI Tool                 | Complete |
+| 6     | Web Frontend             | Complete |
 
 **All phases complete.**
 
@@ -51,3 +52,24 @@ Documentation directory: `docs_for_ai/`
 - All CLI output must be JSON (CLI is for AI agents, not humans)
 - All API content fields return raw HTML (frontend handles rendering and sanitization)
 - Use OpenAI-compatible format (`openai` npm package) for AI calls — not Anthropic SDK
+
+## 5. Publishing to GitHub Packages
+
+Packages are published to GitHub Packages under the `@wzxklm` scope. A GitHub Actions workflow (`.github/workflows/publish.yml`) auto-publishes when a `v*` tag is pushed.
+
+**Packages:**
+
+- `@wzxklm/rss-agg-core` — core library (`packages/core`)
+- `@wzxklm/rss-agg` — CLI tool (`apps/cli`)
+
+**To release a new version:**
+
+1. Bump `version` in the relevant `package.json` (core, cli, or both)
+   - If core changed, bump `packages/core/package.json` first
+   - If cli changed, bump `apps/cli/package.json`
+   - If both changed, bump both
+2. Commit and push to `main`
+3. Create and push a tag: `git tag v<version> && git push origin v<version>`
+4. GitHub Actions will auto-build and publish
+
+**Version convention:** follow semver — `patch` for bug fixes, `minor` for new features, `major` for breaking changes.
