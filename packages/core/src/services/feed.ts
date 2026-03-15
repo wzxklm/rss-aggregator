@@ -8,6 +8,27 @@ import type { Feed, Result } from "../types/index.js";
 
 const rssParser = new RssParser();
 
+const RSSHUB_PREFIX = "rsshub://";
+
+/**
+ * Resolve a feed URL — if it starts with `rsshub://`, replace the scheme
+ * with the self-hosted RSSHub instance base URL from the RSSHUB_URL env var.
+ *
+ * Example: `rsshub://github/trending/weekly/any`
+ *       → `http://rsshub:1200/github/trending/weekly/any`
+ */
+export function resolveRssHubUrl(url: string): string {
+  if (!url.startsWith(RSSHUB_PREFIX)) return url;
+
+  const base = process.env.RSSHUB_URL?.replace(/\/+$/, "");
+  if (!base) {
+    throw new Error("RSSHUB_URL environment variable is not set — cannot resolve rsshub:// URLs");
+  }
+
+  const route = url.slice(RSSHUB_PREFIX.length);
+  return `${base}/${route}`;
+}
+
 export function createFeed(input: {
   url: string;
   title?: string;
@@ -135,7 +156,8 @@ export interface ParsedFeed {
 
 export async function fetchAndParseFeed(url: string): Promise<Result<ParsedFeed>> {
   try {
-    const feed = await rssParser.parseURL(url);
+    const resolvedUrl = resolveRssHubUrl(url);
+    const feed = await rssParser.parseURL(resolvedUrl);
 
     const items: ParsedFeedItem[] = (feed.items ?? []).map((item) => ({
       guid: item.guid ?? item.link ?? item.title ?? nanoid(),
