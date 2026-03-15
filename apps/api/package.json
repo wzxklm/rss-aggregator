@@ -1,0 +1,14 @@
+{
+  "name": "@rss-agg/api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rss-agg/core": "workspace:*"
+  }
+}

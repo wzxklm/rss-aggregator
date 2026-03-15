@@ -1,0 +1,21 @@
+{
+  "name": "@rss-agg/web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.x",
+    "react-dom": "^19.x"
+  },
+  "devDependencies": {
+    "@types/react": "^19.x",
+    "@types/react-dom": "^19.x",
+    "@vitejs/plugin-react": "^4.x",
+    "vite": "^6.x"
+  }
+}

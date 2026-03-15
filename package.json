@@ -1,0 +1,15 @@
+{
+  "name": "rss-agg",
+  "private": true,
+  "packageManager": "pnpm@10.32.1",
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.x",
+    "typescript": "^5.x"
+  }
+}

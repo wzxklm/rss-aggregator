@@ -1,0 +1,17 @@
+{
+  "name": "@rss-agg/cli",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "rss-agg": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rss-agg/core": "workspace:*"
+  }
+}
