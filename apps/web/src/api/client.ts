@@ -143,6 +143,7 @@ export async function refreshAllFeeds(): Promise<{ totalAdded: number }> {
 export async function getEntries(filters: EntryFilters = {}): Promise<{ entries: Entry[]; total: number }> {
   const query: Record<string, string> = {};
   if (filters.feedId) query["feedId"] = filters.feedId;
+  if (filters.categoryId) query["categoryId"] = filters.categoryId;
   if (filters.starred) query["starred"] = "true";
   if (filters.unread) query["unread"] = "true";
   if (filters.search) query["search"] = filters.search;

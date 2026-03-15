@@ -47,7 +47,7 @@ export default function FeedsPage() {
   return (
     <div className="flex flex-1 overflow-hidden">
       {/* Entry List - hidden on mobile when viewing reader */}
-      <div className={`w-full md:w-[360px] md:shrink-0 border-r flex flex-col ${mobileView === "reader" ? "hidden md:flex" : "flex"}`}>
+      <div className={`w-full md:w-[360px] md:shrink-0 border-r flex flex-col min-h-0 ${mobileView === "reader" ? "hidden md:flex" : "flex"}`}>
         <EntryListToolbar filters={filters} />
         <ScrollArea className="flex-1">
           {isLoading ? (
@@ -79,7 +79,7 @@ export default function FeedsPage() {
       </div>
 
       {/* Reader Panel - hidden on mobile when viewing list */}
-      <div className={`flex-1 flex flex-col overflow-hidden ${mobileView === "list" ? "hidden md:flex" : "flex"}`}>
+      <div className={`flex-1 flex flex-col min-h-0 ${mobileView === "list" ? "hidden md:flex" : "flex"}`}>
         {selectedEntryId ? (
           <ReaderPanel
             entryId={selectedEntryId}

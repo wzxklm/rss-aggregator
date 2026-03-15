@@ -60,7 +60,7 @@ export function Sidebar({ className }: SidebarProps) {
   }
 
   return (
-    <aside className={`flex flex-col border-r bg-sidebar ${className ?? ""}`}>
+    <aside className={`flex flex-col min-h-0 border-r bg-sidebar ${className ?? ""}`}>
       <ScrollArea className="flex-1">
         <div className="p-3 space-y-1">
           {/* Nav items */}

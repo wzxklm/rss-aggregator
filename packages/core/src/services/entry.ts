@@ -1,7 +1,7 @@
-import { eq, and, like, desc, sql, lte } from "drizzle-orm";
+import { eq, and, like, desc, sql, lte, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { getDb } from "../db/client.js";
-import { entries } from "../db/schema.js";
+import { entries, feedCategories } from "../db/schema.js";
 import { logger } from "../logger.js";
 import type { Entry, NewEntry, Result } from "../types/index.js";
 
@@ -28,6 +28,7 @@ export function createEntry(
 
 export function listEntries(filters?: {
   feedId?: string;
+  categoryId?: string;
   starred?: boolean;
   unread?: boolean;
   search?: string;
@@ -40,6 +41,20 @@ export function listEntries(filters?: {
 
     if (filters?.feedId) {
       conditions.push(eq(entries.feedId, filters.feedId));
+    }
+    if (filters?.categoryId) {
+      const feedIds = db
+        .select({ feedId: feedCategories.feedId })
+        .from(feedCategories)
+        .where(eq(feedCategories.categoryId, filters.categoryId))
+        .all()
+        .map((r) => r.feedId);
+      if (feedIds.length > 0) {
+        conditions.push(inArray(entries.feedId, feedIds));
+      } else {
+        // No feeds in this category — return empty
+        return { data: { entries: [], total: 0 } };
+      }
     }
     if (filters?.starred) {
       conditions.push(eq(entries.starred, 1));

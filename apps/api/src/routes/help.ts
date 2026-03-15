@@ -17,6 +17,7 @@ const endpoints = [
     auth: true,
     query: {
       feedId: "string?",
+      categoryId: "string?",
       starred: "boolean?",
       unread: "boolean?",
       search: "string?",

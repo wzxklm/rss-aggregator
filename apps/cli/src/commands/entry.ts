@@ -8,12 +8,14 @@ export function registerEntryCommands(program: Command): void {
   entry
     .command("list")
     .option("--feed <id>", "Filter by feed ID")
+    .option("--category <id>", "Filter by category ID")
     .option("--unread", "Show only unread entries")
     .option("--starred", "Show only starred entries")
     .option("--limit <n>", "Max entries to return", "50")
     .action(
       (opts: {
         feed?: string;
+        category?: string;
         unread?: boolean;
         starred?: boolean;
         limit: string;
@@ -21,6 +23,7 @@ export function registerEntryCommands(program: Command): void {
         initDb();
         const result = entryService.listEntries({
           feedId: opts.feed,
+          categoryId: opts.category,
           unread: opts.unread,
           starred: opts.starred,
           limit: parseInt(opts.limit, 10),

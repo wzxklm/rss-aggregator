@@ -9,6 +9,7 @@ entryRoutes.get("/", (c) => {
   const query = c.req.query();
   const result = entryService.listEntries({
     feedId: query["feedId"],
+    categoryId: query["categoryId"],
     starred: query["starred"] === "true",
     unread: query["unread"] === "true",
     search: query["search"],

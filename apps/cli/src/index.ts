@@ -74,6 +74,7 @@ async function main() {
               command: "entry list",
               options: [
                 "--feed <id>",
+                "--category <id>",
                 "--unread",
                 "--starred",
                 "--limit <n>",
