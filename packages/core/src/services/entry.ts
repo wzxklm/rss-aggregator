@@ -74,7 +74,7 @@ export function listEntries(filters?: {
       .select()
       .from(entries)
       .where(where)
-      .orderBy(desc(entries.publishedAt))
+      .orderBy(desc(entries.publishedAt), desc(entries.id))
       .limit(limit)
       .offset(offset)
       .all();
