@@ -1,6 +1,6 @@
 {
   "name": "@wzxklm/rss-agg",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "private": false,
   "license": "MIT",
   "description": "RSS aggregator CLI with AI-powered summarization and translation",

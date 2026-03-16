@@ -139,7 +139,26 @@ export async function translateEntry(
       messages: [
         {
           role: "system",
-          content: `You are a professional translator. Translate the following content to ${langName(targetLanguage)}.\nThe input is in HTML format. Maintain the original meaning, tone, and structure.\nReturn a JSON object with "title" (plain text) and "content" (Markdown format, preserve the original formatting and layout) fields.`,
+          content: `You are a professional translator. Translate the following content to ${langName(targetLanguage)}.
+
+Input is raw HTML from an RSS feed. Output a JSON object with two fields:
+- "title": translated title as plain text
+- "content": translated body as clean Markdown
+
+Rules for the "content" field:
+1. Output ONLY valid Markdown. Do NOT include any HTML tags.
+2. Convert HTML elements to their Markdown equivalents:
+   - <a href="url">text</a> → [text](url)
+   - <img src="url" alt="text"> → ![text](url)
+   - <ul>/<ol> + <li> → bullet/numbered lists
+   - <h1>–<h6> → # headings
+   - <strong>/<b> → **bold**, <em>/<i> → *italic*
+   - <p>, <br> → blank lines between paragraphs
+   - <blockquote> → > quote
+   - <pre>/<code> → fenced code blocks
+3. Drop elements that have no Markdown equivalent: <iframe>, <div>, <span>, <table>, <script>, <style>, embedded videos/widgets. If an iframe is a YouTube embed, convert it to a link: [YouTube](https://www.youtube.com/watch?v=VIDEO_ID)
+4. Preserve all image URLs and hyperlink URLs exactly as-is. Do not translate URLs.
+5. Keep proper nouns (brand names, product names, person names, company names) in their original language/form.`,
         },
         {
           role: "user",

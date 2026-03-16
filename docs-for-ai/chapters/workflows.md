@@ -167,7 +167,8 @@ aiService.translateEntry(entryId, targetLanguage):
 ├── Get entry by ID
 ├── Get raw HTML: entry.content || entry.description
 ├── Resolve language: langName(code) → full name
-├── API call with prompt: input is HTML, return JSON { "title" (text), "content" (Markdown) }
+├── API call with prompt: input is HTML, return JSON { "title" (text), "content" (clean Markdown, no HTML tags) }
+│   ├── Prompt rules: convert HTML→Markdown, drop iframes (YouTube→link), preserve URLs, keep proper nouns
 │   ├── Success → parse JSON response, strip markdown code fences
 │   └── Error handling same as summarize
 ├── INSERT into translations table (cache)

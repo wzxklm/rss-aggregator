@@ -11,7 +11,8 @@ Provides AI-powered summarization and translation of entry content. Uses an Open
 - **Content Preparation**: Sends raw HTML content directly to AI (no stripping or truncation). Falls back from `content` to `description` if content is null.
 - **Error Handling**: Specific messages for 429 (rate limit), 401 (auth), connection errors. Generic fallback for other API errors.
 - **Default Model**: `gpt-4o-mini` unless overridden by `AI_MODEL` env var.
-- **Translation JSON Parsing**: AI returns JSON with `title` (plain text) and `content` (Markdown) fields. Strips markdown code fences before parsing. Returns error on invalid JSON.
+- **Translation JSON Parsing**: AI returns JSON with `title` (plain text) and `content` (clean Markdown) fields. Strips markdown code fences before parsing. Returns error on invalid JSON.
+- **Translation Prompt Rules**: Prompt explicitly instructs AI to (1) output only valid Markdown with no HTML tags, (2) convert HTML elements to Markdown equivalents, (3) drop non-convertible elements like `<iframe>`/`<div>` (YouTube embeds become links), (4) preserve URLs as-is, (5) keep proper nouns in original language/form.
 
 ## Interface
 
@@ -32,7 +33,7 @@ Provides AI-powered summarization and translation of entry content. Uses an Open
 
 - **Language name mapping**: `LANGUAGE_NAMES` record maps ISO codes (`zh`, `en`, `es`, `fr`, `de`, `ja`, `ko`) to full names (`Simplified Chinese`, `English`, etc.). `langName(code)` resolves the name; falls back to raw code if unmapped.
 - **Summarization prompt**: System message instructs 2-4 sentence Markdown summary with `MUST write in ${langName(language)}`. Input is raw HTML. User message includes title + HTML content.
-- **Translation prompt**: System message requests JSON output with `title` (plain text) and `content` (Markdown, preserving original formatting/layout) fields, targeting `${langName(targetLanguage)}`. Input is raw HTML. Response parsed with `JSON.parse` after stripping code fences.
+- **Translation prompt**: System message requests JSON output with `title` (plain text) and `content` (clean Markdown, no HTML tags) fields, targeting `${langName(targetLanguage)}`. Input is raw HTML. Prompt includes explicit HTML→Markdown conversion rules (links, images, lists, headings, etc.), instructions to drop unconvertible elements (iframes become YouTube links), URL preservation, and proper noun retention. Response parsed with `JSON.parse` after stripping code fences.
 - **Cache storage**: After successful API call, result is inserted into `summaries` or `translations` table with `nanoid()` PK. Unique index on `(entryId, language)` prevents duplicate cache entries.
 - **Timing**: Logs elapsed seconds for each API call.
 - **handleAiError**: Shared error handler distinguishes `OpenAI.APIError` (with status codes), `OpenAI.APIConnectionError`, and generic errors.
