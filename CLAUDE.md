@@ -4,31 +4,7 @@
 
 DevContainer (Ubuntu 22.04 + CUDA 12.4), Node.js 22.x, gh CLI pre-installed.
 
-**Installed:**
-
-- pnpm 10.32.1
-- Turborepo 2.8.17
-- TypeScript 5.9.3
-
-> Update this section as the environment evolves.
-
 ## 2. Development Status
-
-See `docs_for_ai/development-plan.md` for full details of each phase.
-
-| Phase | Name                     | Status   |
-| ----- | ------------------------ | -------- |
-| 0     | Project Scaffolding      | Complete |
-| 1     | Core — Database & Models | Complete |
-| 2     | Core — RSS Fetching      | Complete |
-| 3     | API Server               | Complete |
-| 4     | AI Features              | Complete |
-| 5     | CLI Tool                 | Complete |
-| 6     | Web Frontend             | Complete |
-
-**All phases complete.**
-
-> Update this table as each phase is completed.
 
 ## 3. Project Documentation
 
@@ -44,6 +20,7 @@ Documentation directory: `docs-for-ai/`
 
 ## 4. AI Workflow Rules
 
+- When launching subagents via the Agent tool, instruct them to read `CLAUDE.md` first before performing any work
 - Before starting any task, read `docs-for-ai/index.md` for project overview and `docs-for-ai/pitfalls.md` for conventions
 - Then read the relevant chapter(s) as needed:
   - Database / services / types → `chapters/core/`
@@ -63,10 +40,9 @@ Packages are published to GitHub Packages under the `@wzxklm` scope. A GitHub Ac
 
 **To release a new version:**
 
-1. Bump `version` in the relevant `package.json` (core, cli, or both)
-   - If core changed, bump `packages/core/package.json` first
-   - If cli changed, bump `apps/cli/package.json`
-   - If both changed, bump both
+1. Bump `version` in the relevant `package.json`
+   - If core changed, bump both `packages/core/package.json` and `apps/cli/package.json` (cli depends on core)
+   - If only cli changed, bump `apps/cli/package.json` only
 2. Commit and push to `main`
 3. Create and push a tag: `git tag v<version> && git push origin v<version>`
 4. GitHub Actions will auto-build and publish

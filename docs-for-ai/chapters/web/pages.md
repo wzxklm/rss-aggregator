@@ -36,11 +36,12 @@ Main reading interface. Dual-pane layout: entry list (left, 360px) + reader pane
 
 ### AIPanel Sub-component
 - **Position**: Rendered at top of reader panel (after title/metadata/actions, before content separator)
+- **Keyed by entry ID**: `key={entry.id}` forces remount on entry switch, resetting mutation state to prevent stale AI results from previous entry leaking into the current view
 - **Layout**: Action buttons (Summarize, Translate) on the left, shared language selector on the right — one dropdown controls target language for both operations
 - **Summarize**: Calls `useSummarize({ entryId, language: targetLang })` with selected language (default `"zh"`)
 - **Translate**: Calls `useTranslate({ entryId, language: targetLang })` with same selected language
 - **Language options**: zh, es, fr, de, ja, ko
-- **Result display**: Shows existing summaries/translations matching selected language from entry detail, or fresh mutation result
+- **Result display**: Shows existing summaries/translations matching selected language from entry detail, or fresh mutation result. Content rendered as Markdown via `react-markdown` wrapped in `prose` styling for proper formatting (headings, lists, paragraphs)
 - **Error toasts**: Mutation errors shown via `toast.error()`
 
 ### EntryListToolbar Sub-component
@@ -48,10 +49,10 @@ Main reading interface. Dual-pane layout: entry list (left, 360px) + reader pane
 
 ### Security Concerns
 - See `pitfalls.md` "Web Frontend — Security" for DOMPurify and AI panel sanitization details
-- Translation content rendered as plain text (not HTML), so safe from XSS
+- AI summary/translation content rendered as Markdown via `react-markdown` (no raw HTML pass-through), safe from XSS
 
 ### Dependencies
-- Uses: `useEntries`, `useEntry`, `useUpdateEntry`, `useMarkAllRead`, `useSummarize`, `useTranslate`, `DOMPurify`, ScrollArea, Button, Skeleton, Separator, Badge, DropdownMenu
+- Uses: `useEntries`, `useEntry`, `useUpdateEntry`, `useMarkAllRead`, `useSummarize`, `useTranslate`, `DOMPurify`, `react-markdown`, ScrollArea, Button, Skeleton, Separator, Badge, DropdownMenu
 - Used by: `App.tsx` (routes `/`, `/starred`, `/feed/:feedId`, `/category/:categoryId`)
 
 ---

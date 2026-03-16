@@ -25,6 +25,22 @@ function getModel(): string {
   return process.env["AI_MODEL"] ?? "gpt-4o-mini";
 }
 
+// ── Language helpers ─────────────────────────────────────────────────────
+
+const LANGUAGE_NAMES: Record<string, string> = {
+  zh: "Simplified Chinese",
+  en: "English",
+  es: "Spanish",
+  fr: "French",
+  de: "German",
+  ja: "Japanese",
+  ko: "Korean",
+};
+
+function langName(code: string): string {
+  return LANGUAGE_NAMES[code] ?? code;
+}
+
 // ── Summarize ─────────────────────────────────────────────────────────────
 
 export async function summarizeEntry(
@@ -60,7 +76,7 @@ export async function summarizeEntry(
       messages: [
         {
           role: "system",
-          content: `You are a content summarizer. Provide a concise summary (2-4 sentences) of the following article.\nRespond in ${language}. Focus on key points and takeaways.\nOutput only the summary text, no prefixes or labels.`,
+          content: `You are a content summarizer. Provide a concise summary (2-4 sentences) of the following article.\nYou MUST write the summary in ${langName(language)}. Focus on key points and takeaways.\nOutput only the summary text, no prefixes or labels.`,
         },
         {
           role: "user",
@@ -124,7 +140,7 @@ export async function translateEntry(
       messages: [
         {
           role: "system",
-          content: `You are a professional translator. Translate the following content to ${targetLanguage}.\nMaintain the original meaning, tone, and structure.\nReturn a JSON object with "title" and "content" fields.`,
+          content: `You are a professional translator. Translate the following content to ${langName(targetLanguage)}.\nMaintain the original meaning, tone, and structure.\nReturn a JSON object with "title" and "content" fields.`,
         },
         {
           role: "user",

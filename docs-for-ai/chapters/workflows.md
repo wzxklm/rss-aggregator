@@ -136,10 +136,11 @@ aiService.summarizeEntry(entryId, language = "en"):
 ├── Get entry by ID
 │   └── Not found → return { error: "Entry not found" }
 ├── Prepare content: htmlToText(entry.content || entry.description, 8000)
+├── Resolve language: langName(code) → full name (e.g. "zh" → "Simplified Chinese")
 ├── Get/create OpenAI client (lazy singleton)
 │   └── Config: AI_BASE_URL, AI_API_KEY, AI_MODEL (default "gpt-4o-mini")
 ├── API call: chat.completions.create({
-│   │   model, messages: [system prompt, user content]
+│   │   model, messages: [system prompt with "MUST write in {langName}", user content]
 │   │ })
 │   ├── Success → extract response text
 │   ├── 429 → return { error: "Rate limited" }
@@ -165,7 +166,8 @@ aiService.translateEntry(entryId, targetLanguage):
 │   └── Hit → return cached Translation
 ├── Get entry by ID
 ├── Prepare content: htmlToText(entry.content || entry.description, 8000)
-├── API call with prompt requesting JSON { "title", "content" }
+├── Resolve language: langName(code) → full name
+├── API call with prompt requesting JSON { "title", "content" } in langName(targetLanguage)
 │   ├── Success → parse response, strip markdown code fences
 │   └── Error handling same as summarize
 ├── INSERT into translations table (cache)

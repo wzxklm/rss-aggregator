@@ -28,6 +28,7 @@
 - 🔴 **API key in env**: `AI_API_KEY` stored as environment variable — if process.env is logged or dumped, credentials leak
 - **Content truncation**: `htmlToText` truncates to 8000 chars; long articles lose tail content before AI processing
 - **Cache-first**: Summaries/translations cached in DB by (entryId, language); no cache invalidation if entry content changes
+- **Language name mapping**: Prompts use `langName(code)` to convert ISO codes to full names (e.g. `"zh"` → `"Simplified Chinese"`); adding a new language option in the web UI requires a corresponding entry in the `LANGUAGE_NAMES` map in `services/ai.ts`
 - **Default model**: Falls back to `gpt-4o-mini` if `AI_MODEL` not set
 - **Fire-and-forget errors**: No retry on API failures; user sees error once with no automatic retry
 
@@ -62,7 +63,7 @@
 - 🔴 **localStorage token storage**: JWT stored in localStorage; any XSS vulnerability can exfiltrate the token (no HttpOnly protection possible in SPA)
 - 🔴 **Client-only auth check**: AuthGuard only checks token existence in localStorage; no server-side validation until first API call — stale/revoked tokens pass initial guard
 - **DOMPurify on content**: Entry HTML sanitized via `DOMPurify.sanitize()` before `dangerouslySetInnerHTML` in reader panel
-- **AI panel unsanitized**: Translation content from AI may not be sanitized before display (assumes API-level safety)
+- **AI panel uses react-markdown**: Summary/translation content rendered via `react-markdown` (no raw HTML), safe from XSS
 
 ## Web Frontend — UX
 

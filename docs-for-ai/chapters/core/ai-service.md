@@ -30,8 +30,9 @@ Provides AI-powered summarization and translation of entry content. Uses an Open
 
 ## Internal Details
 
-- **Summarization prompt**: System message instructs 2-4 sentence summary in target language. User message includes title + plain text content.
-- **Translation prompt**: System message requests JSON output with `title` and `content` fields in target language. Response parsed with `JSON.parse` after stripping code fences.
+- **Language name mapping**: `LANGUAGE_NAMES` record maps ISO codes (`zh`, `en`, `es`, `fr`, `de`, `ja`, `ko`) to full names (`Simplified Chinese`, `English`, etc.). `langName(code)` resolves the name; falls back to raw code if unmapped.
+- **Summarization prompt**: System message instructs 2-4 sentence summary with `MUST write in ${langName(language)}`. User message includes title + plain text content.
+- **Translation prompt**: System message requests JSON output with `title` and `content` fields, targeting `${langName(targetLanguage)}`. Response parsed with `JSON.parse` after stripping code fences.
 - **Cache storage**: After successful API call, result is inserted into `summaries` or `translations` table with `nanoid()` PK. Unique index on `(entryId, language)` prevents duplicate cache entries.
 - **Timing**: Logs elapsed seconds for each API call.
 - **handleAiError**: Shared error handler distinguishes `OpenAI.APIError` (with status codes), `OpenAI.APIConnectionError`, and generic errors.

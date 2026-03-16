@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useOutletContext } from "react-router";
+import Markdown from "react-markdown";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -270,7 +271,7 @@ function ReaderPanel({ entryId, onBack }: { entryId: string; onBack: () => void 
         </div>
 
         {/* AI Panel */}
-        <AIPanel entryId={entry.id} summaries={entry.summaries} translations={entry.translations} />
+        <AIPanel key={entry.id} entryId={entry.id} summaries={entry.summaries} translations={entry.translations} />
 
         <Separator />
 
@@ -363,7 +364,9 @@ function AIPanel({
       {(existingSummary || summarize.data) && (
         <div className="rounded-md border p-3 bg-muted/50">
           <h4 className="text-xs font-medium text-muted-foreground mb-1">Summary</h4>
-          <p className="text-sm">{summarize.data?.summary ?? existingSummary?.summary}</p>
+          <div className="prose prose-sm max-w-none dark:prose-invert">
+            <Markdown>{summarize.data?.summary ?? existingSummary?.summary}</Markdown>
+          </div>
         </div>
       )}
 
@@ -379,7 +382,9 @@ function AIPanel({
             </p>
           )}
           {(translate.data?.content ?? existingTranslation?.content) && (
-            <p className="text-sm">{translate.data?.content ?? existingTranslation?.content}</p>
+            <div className="prose prose-sm max-w-none dark:prose-invert">
+              <Markdown>{translate.data?.content ?? existingTranslation?.content}</Markdown>
+            </div>
           )}
         </div>
       )}
