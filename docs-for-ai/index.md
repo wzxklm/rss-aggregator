@@ -8,7 +8,7 @@ Monorepo RSS feed aggregator with core library, REST API, CLI tool, and React SP
 
 | Key      | Value |
 |----------|-------|
-| Stack    | TypeScript, Node.js 22, React 19, Hono, Drizzle ORM, SQLite, Vite, TailwindCSS, react-markdown, Turborepo, pnpm |
+| Stack    | TypeScript, Node.js 22, React 19, Hono, Drizzle ORM, SQLite, Vite, TailwindCSS, @tailwindcss/typography, react-markdown, Turborepo, pnpm |
 | Arch     | Monorepo: Core Library → API (Hono) + CLI (Commander) + Web SPA (React) |
 | Platform | Node.js 22 (server/CLI), Browser (frontend), Docker |
 | Tests    | None configured |

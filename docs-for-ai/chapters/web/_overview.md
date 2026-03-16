@@ -20,4 +20,4 @@
 
 ## Overview
 
-Single-page React app using Vite, TanStack Query for server state, react-router for client routing, and Base UI (shadcn) primitives for the component library. All API calls go through an ofetch client with auto Bearer token injection and 401 auto-logout. Content from RSS feeds is rendered as sanitized HTML via DOMPurify. The app supports AI-powered summarization and translation of entries.
+Single-page React app using Vite, TanStack Query for server state, react-router for client routing, and Base UI (shadcn) primitives for the component library. All API calls go through an ofetch client with auto Bearer token injection and 401 auto-logout. Content from RSS feeds is rendered as sanitized HTML via DOMPurify, styled with `@tailwindcss/typography` `prose` classes. The app supports AI-powered summarization and translation of entries.

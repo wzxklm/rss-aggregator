@@ -65,6 +65,11 @@
 - **DOMPurify on content**: Entry HTML sanitized via `DOMPurify.sanitize()` before `dangerouslySetInnerHTML` in reader panel
 - **AI panel uses react-markdown**: Summary/translation content rendered via `react-markdown` (no raw HTML), safe from XSS
 
+## Web Frontend — Styling
+
+- 🔴 **`@tailwindcss/typography` required for prose**: Entry HTML content and AI results rely on `prose` classes for formatting (headings, links, bold, lists). The plugin is loaded via `@plugin "@tailwindcss/typography"` in `index.css` (Tailwind v4 syntax) — removing it silently strips all article formatting to plain text
+- **Tailwind v4 plugin syntax**: Plugins use `@plugin "pkg"` in CSS, NOT `@import` or JS config — wrong syntax causes build failure
+
 ## Web Frontend — UX
 
 - **No pagination UI**: Entry list hardcoded to 50 entries; no "next page" or infinite scroll
