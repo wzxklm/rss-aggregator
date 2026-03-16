@@ -4,7 +4,6 @@ import { nanoid } from "nanoid";
 import { getDb } from "../db/client.js";
 import { entries, summaries, translations } from "../db/schema.js";
 import { logger } from "../logger.js";
-import { htmlToText } from "../utils/index.js";
 import type { Summary, Translation, Result } from "../types/index.js";
 
 // ── AI client (lazy singleton) ────────────────────────────────────────────
@@ -66,8 +65,8 @@ export async function summarizeEntry(
     const entry = db.select().from(entries).where(eq(entries.id, entryId)).get();
     if (!entry) return { error: "Entry not found" };
 
-    const text = htmlToText(entry.content ?? entry.description ?? "");
-    if (!text) return { error: "Entry has no content to summarize" };
+    const html = entry.content ?? entry.description ?? "";
+    if (!html) return { error: "Entry has no content to summarize" };
 
     // Call AI API
     const start = Date.now();
@@ -76,11 +75,11 @@ export async function summarizeEntry(
       messages: [
         {
           role: "system",
-          content: `You are a content summarizer. Provide a concise summary (2-4 sentences) of the following article.\nYou MUST write the summary in ${langName(language)}. Focus on key points and takeaways.\nOutput only the summary text, no prefixes or labels.`,
+          content: `You are a content summarizer. Provide a concise summary (2-4 sentences) of the following article.\nYou MUST write the summary in ${langName(language)}. Focus on key points and takeaways.\nThe input is in HTML format. Output only the summary text in Markdown, no prefixes or labels.`,
         },
         {
           role: "user",
-          content: `Title: ${entry.title ?? ""}\n\n${text}`,
+          content: `Title: ${entry.title ?? ""}\n\n${html}`,
         },
       ],
     });
@@ -130,8 +129,8 @@ export async function translateEntry(
     const entry = db.select().from(entries).where(eq(entries.id, entryId)).get();
     if (!entry) return { error: "Entry not found" };
 
-    const text = htmlToText(entry.content ?? entry.description ?? "");
-    if (!text) return { error: "Entry has no content to translate" };
+    const html = entry.content ?? entry.description ?? "";
+    if (!html) return { error: "Entry has no content to translate" };
 
     // Call AI API
     const start = Date.now();
@@ -140,11 +139,11 @@ export async function translateEntry(
       messages: [
         {
           role: "system",
-          content: `You are a professional translator. Translate the following content to ${langName(targetLanguage)}.\nMaintain the original meaning, tone, and structure.\nReturn a JSON object with "title" and "content" fields.`,
+          content: `You are a professional translator. Translate the following content to ${langName(targetLanguage)}.\nThe input is in HTML format. Maintain the original meaning, tone, and structure.\nReturn a JSON object with "title" (plain text) and "content" (Markdown format, preserve the original formatting and layout) fields.`,
         },
         {
           role: "user",
-          content: `Title: ${entry.title ?? ""}\n\n${text}`,
+          content: `Title: ${entry.title ?? ""}\n\n${html}`,
         },
       ],
     });

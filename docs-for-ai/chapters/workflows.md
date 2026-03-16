@@ -135,14 +135,14 @@ aiService.summarizeEntry(entryId, language = "en"):
 │   └── Hit → return cached Summary
 ├── Get entry by ID
 │   └── Not found → return { error: "Entry not found" }
-├── Prepare content: htmlToText(entry.content || entry.description, 8000)
+├── Get raw HTML: entry.content || entry.description
 ├── Resolve language: langName(code) → full name (e.g. "zh" → "Simplified Chinese")
 ├── Get/create OpenAI client (lazy singleton)
 │   └── Config: AI_BASE_URL, AI_API_KEY, AI_MODEL (default "gpt-4o-mini")
 ├── API call: chat.completions.create({
-│   │   model, messages: [system prompt with "MUST write in {langName}", user content]
+│   │   model, messages: [system prompt (input is HTML, output Markdown), title + raw HTML]
 │   │ })
-│   ├── Success → extract response text
+│   ├── Success → extract Markdown response text
 │   ├── 429 → return { error: "Rate limited" }
 │   ├── 401 → return { error: "Auth failed" }
 │   └── Connection error → return { error: "Connection failed" }
@@ -165,10 +165,10 @@ aiService.translateEntry(entryId, targetLanguage):
 ├── Check cache: SELECT FROM translations WHERE entryId AND language
 │   └── Hit → return cached Translation
 ├── Get entry by ID
-├── Prepare content: htmlToText(entry.content || entry.description, 8000)
+├── Get raw HTML: entry.content || entry.description
 ├── Resolve language: langName(code) → full name
-├── API call with prompt requesting JSON { "title", "content" } in langName(targetLanguage)
-│   ├── Success → parse response, strip markdown code fences
+├── API call with prompt: input is HTML, return JSON { "title" (text), "content" (Markdown) }
+│   ├── Success → parse JSON response, strip markdown code fences
 │   └── Error handling same as summarize
 ├── INSERT into translations table (cache)
 └── Return Translation { title, content, language }
